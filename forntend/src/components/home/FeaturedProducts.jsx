@@ -1,15 +1,20 @@
-
-import { ShoppingCart, Star } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 import api from "../../services/api";
-import { addToCart } from "../../services/cart.service";
+import {
+    addToCart,
+    removeCartItem,
+    updateCartItem
+} from "../../services/cart.service";
 
 const FeaturedProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [addingId, setAddingId] = useState(null);
     const [message, setMessage] = useState("");
+    const { cartItems, applyCartResponse, refreshCart } = useCart();
 
     const navigate = useNavigate();
 
@@ -40,7 +45,8 @@ const FeaturedProducts = () => {
             setAddingId(productId);
             setMessage("");
 
-            await addToCart(productId, 1);
+            const response = await addToCart(productId, 1);
+            applyCartResponse(response);
 
             setMessage("Product added to cart successfully!");
         } catch (error) {
@@ -52,6 +58,25 @@ const FeaturedProducts = () => {
             setMessage(
                 error.response?.data?.message ||
                 "Unable to add product to cart."
+            );
+        } finally {
+            setAddingId(null);
+        }
+    };
+
+    const handleQuantity = async (productId, quantity) => {
+        try {
+            setAddingId(productId);
+            setMessage("");
+
+            const response = quantity < 1
+                ? await removeCartItem(productId)
+                : await updateCartItem(productId, quantity);
+
+            applyCartResponse(response);
+        } catch (error) {
+            setMessage(
+                error.response?.data?.message || "Unable to update cart quantity."
             );
         } finally {
             setAddingId(null);
@@ -104,7 +129,13 @@ const FeaturedProducts = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {products.map(product => (
+                    {products.map(product => {
+                        const cartItem = cartItems.find(item =>
+                            (item.product?._id || item.product)?.toString() === product._id
+                        );
+                        const cartQuantity = cartItem?.quantity || 0;
+
+                        return (
                         <article
                             key={product._id}
                             className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
@@ -154,25 +185,52 @@ const FeaturedProducts = () => {
                                         )}
                                     </div>
 
-                                    <button
-                                        onClick={() => handleAddToCart(product._id)}
-                                        disabled={
-                                            addingId === product._id ||
-                                            product.stock <= 0
-                                        }
-                                        className="flex items-center gap-2 rounded-xl bg-brand-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-500/20 hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                    >
-                                        <ShoppingCart size={16} />
-                                        {product.stock <= 0
-                                            ? "Out of Stock"
-                                            : addingId === product._id
-                                                ? "Adding..."
-                                                : "Add"}
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        {cartQuantity > 0 ? (
+                                        <div className="flex items-center overflow-hidden rounded-xl border border-brand-500 bg-brand-50 shadow-sm">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleQuantity(product._id, cartQuantity - 1)}
+                                                disabled={addingId === product._id}
+                                                className="flex h-10 w-10 items-center justify-center text-brand-700 hover:bg-brand-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                                aria-label="Decrease quantity"
+                                            >
+                                                <Minus size={16} />
+                                            </button>
+                                            <span className="min-w-8 text-center text-sm font-bold text-brand-700">
+                                                {cartQuantity}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleQuantity(product._id, cartQuantity + 1)}
+                                                disabled={addingId === product._id || cartQuantity >= product.stock}
+                                                className="flex h-10 w-10 items-center justify-center text-brand-700 hover:bg-brand-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                                aria-label="Increase quantity"
+                                            >
+                                                <Plus size={16} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={() => handleAddToCart(product._id)}
+                                            disabled={addingId === product._id || product.stock <= 0}
+                                            className="flex items-center gap-2 rounded-xl bg-brand-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-500/20 transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            <ShoppingCart size={16} />
+                                            {product.stock <= 0
+                                                ? "Out of Stock"
+                                                : addingId === product._id
+                                                    ? "Adding..."
+                                                    : "Add"}
+                                        </button>
+                                    )}
+                                    </div>
                                 </div>
                             </div>
                         </article>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </section>

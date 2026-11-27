@@ -1,4 +1,4 @@
-
+import { ChevronLeft, LockKeyhole, MapPin, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -251,130 +251,154 @@ const Checkout = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 px-4 py-10">
+        <div className="min-h-screen bg-[#f7f7f5] px-4 py-8 sm:px-6 sm:py-12">
             <div className="mx-auto max-w-6xl">
+                <Link
+                    to="/cart"
+                    className="mb-7 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-brand-600"
+                >
+                    <ChevronLeft size={17} />
+                    Back to cart
+                </Link>
 
-                <h1 className="mb-2 text-3xl font-bold">
-                    Checkout
-                </h1>
-
-                <p className="mb-8 text-gray-500">
-                    Enter your delivery details.
-                </p>
+                <div className="mb-7 flex items-end justify-between gap-4">
+                    <div>
+                        <p className="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
+                            Secure checkout
+                        </p>
+                        <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                            Checkout
+                        </h1>
+                    </div>
+                    <div className="hidden items-center gap-2 text-sm sm:flex">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-950 text-xs font-bold text-white">1</span>
+                        <span className="text-slate-400">Cart</span>
+                        <span className="mx-1 h-px w-8 bg-slate-300" />
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-950 text-xs font-bold text-white">2</span>
+                        <span className="font-semibold text-slate-900">Checkout</span>
+                    </div>
+                </div>
 
                 {error && (
-                    <p className="mb-5 rounded-lg bg-red-50 p-3 text-red-600">
+                    <p className="mb-5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
                         {error}
                     </p>
                 )}
 
                 {items.length === 0 ? (
-                    <div className="rounded-xl bg-white p-10 text-center">
-                        <h2 className="text-xl font-semibold">
-                            Your cart is empty
-                        </h2>
-
+                    <div className="rounded-2xl border border-slate-200/70 bg-white p-12 text-center shadow-sm">
+                        <h2 className="text-xl font-bold text-slate-900">Your cart is empty</h2>
                         <Link
                             to="/products"
-                            className="mt-5 inline-block rounded-lg bg-black px-6 py-3 text-white"
+                            className="mt-5 inline-block rounded-xl bg-slate-950 px-6 py-3 text-sm font-bold text-white"
                         >
-                            Shop Now
+                            Shop now
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid gap-8 lg:grid-cols-3">
-
+                    <div className="grid gap-8 lg:grid-cols-5">
                         <form
                             onSubmit={handleSubmit}
-                            className="space-y-5 rounded-xl bg-white p-6 shadow-sm lg:col-span-2"
+                            className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_12px_40px_-24px_rgba(15,23,42,0.35)] sm:p-7 lg:col-span-3"
                         >
-                            <h2 className="text-xl font-semibold">
-                                Shipping Information
-                            </h2>
-
-                            {[
-                                ["fullName", "Full Name", "text"],
-                                ["phone", "Mobile Number", "tel"],
-                                ["email", "Email Address", "email"],
-                                ["address", "Full Address", "text"],
-                                ["city", "City", "text"],
-                                ["state", "State", "text"],
-                                ["pincode", "PIN Code", "text"]
-                            ].map(([name, label, type]) => (
-                                <div key={name}>
-                                    <label
-                                        htmlFor={name}
-                                        className="mb-2 block text-sm font-medium text-gray-700"
-                                    >
-                                        {label}
-                                    </label>
-
-                                    <input
-                                        id={name}
-                                        name={name}
-                                        type={type}
-                                        value={formData[name]}
-                                        onChange={handleChange}
-                                        required
-                                        maxLength={
-                                            name === "phone" ? 10 :
-                                            name === "pincode" ? 6 :
-                                            undefined
-                                        }
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
-                                    />
+                            <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-5">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                                    <MapPin size={19} />
+                                </span>
+                                <div>
+                                    <h2 className="text-lg font-bold text-slate-950">Delivery Information</h2>
+                                    <p className="mt-0.5 text-xs text-slate-400">Where should we deliver your order?</p>
                                 </div>
-                            ))}
+                            </div>
 
-                            <button
-                                type="submit"
-                                disabled={submitting || items.length === 0}
-                                className="w-full rounded-lg bg-black px-6 py-3 font-medium text-white disabled:opacity-50"
-                            >
-                                {submitting
-                                    ? "Processing..."
-                                    : "Pay with Razorpay"}
-                            </button>
-                        </form>
-
-                        <div className="h-fit rounded-xl bg-white p-6 shadow-sm">
-                            <h2 className="text-xl font-semibold">
-                                Order Summary
-                            </h2>
-
-                            <div className="mt-5 space-y-4">
-                                {items.map((item) => (
-                                    <div
-                                        key={item.product?._id}
-                                        className="flex justify-between gap-3 text-sm"
-                                    >
-                                        <span className="text-gray-600">
-                                            {item.product?.name} × {item.quantity}
-                                        </span>
-
-                                        <span className="font-medium">
-                                            {formatPrice(
-                                                (item.product?.price || 0) *
-                                                item.quantity
-                                            )}
-                                        </span>
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                { [
+                                    ["fullName", "Full Name", "text", "e.g. Rahul Sharma"],
+                                    ["phone", "Mobile Number", "tel", "10-digit mobile number"],
+                                    ["email", "Email Address", "email", "name@example.com"],
+                                    ["address", "Full Address", "text", "House, street and landmark"],
+                                    ["city", "City", "text", "City"],
+                                    ["state", "State", "text", "State"],
+                                    ["pincode", "PIN Code", "text", "6-digit PIN code"]
+                                ].map(([name, label, type, placeholder]) => (
+                                    <div key={name} className={name === "address" ? "sm:col-span-2" : ""}>
+                                        <label htmlFor={name} className="mb-2 block text-sm font-bold text-slate-700">
+                                            {label}
+                                        </label>
+                                        <input
+                                            id={name}
+                                            name={name}
+                                            type={type}
+                                            value={formData[name]}
+                                            onChange={handleChange}
+                                            placeholder={placeholder}
+                                            required
+                                            maxLength={name === "phone" ? 10 : name === "pincode" ? 6 : undefined}
+                                            className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
+                                        />
                                     </div>
                                 ))}
                             </div>
 
-                            <hr className="my-5" />
+                            <button
+                                type="submit"
+                                disabled={submitting || items.length === 0}
+                                className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 text-sm font-bold text-white shadow-lg shadow-slate-950/10 transition hover:-translate-y-0.5 hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                <LockKeyhole size={17} />
+                                {submitting ? "Processing..." : `Pay ${formatPrice(subtotal)} securely`}
+                            </button>
+                        </form>
 
-                            <div className="flex justify-between text-lg font-bold">
-                                <span>Subtotal</span>
-                                <span>{formatPrice(subtotal)}</span>
+                        <aside className="h-fit rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_12px_40px_-24px_rgba(15,23,42,0.35)] sm:p-6 lg:col-span-2 lg:sticky lg:top-24">
+                            <h2 className="text-lg font-bold text-slate-950">Order Summary</h2>
+
+                            <div className="mt-5 max-h-72 space-y-4 overflow-y-auto pr-1">
+                                {items.map((item) => {
+                                    const product = item.product;
+                                    const image = product?.images?.[0]?.url;
+                                    return (
+                                        <div key={product?._id} className="flex items-center gap-3">
+                                            <div className="h-16 w-16 shrink-0 rounded-xl bg-slate-100">
+                                                {image && (
+                                                    <img src={image} alt={product.name} className="h-full w-full rounded-xl object-contain p-1.5" />
+                                                )}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="line-clamp-2 text-sm font-semibold text-slate-800">{product?.name}</p>
+                                                <p className="mt-1 text-xs text-slate-400">Qty: {item.quantity}</p>
+                                            </div>
+                                            <p className="shrink-0 text-sm font-bold text-slate-900">
+                                                {formatPrice((product?.price || 0) * item.quantity)}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
                             </div>
 
-                            <p className="mt-3 text-xs text-gray-500">
-                                Shipping and final charges will be calculated
-                                before payment.
-                            </p>
-                        </div>
+                            <div className="my-5 h-px bg-slate-100" />
 
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between text-slate-500">
+                                    <span>Subtotal</span>
+                                    <span className="font-semibold text-slate-800">{formatPrice(subtotal)}</span>
+                                </div>
+                                <div className="flex justify-between text-slate-500">
+                                    <span>Shipping</span>
+                                    <span className="font-semibold text-emerald-600">Free</span>
+                                </div>
+                            </div>
+
+                            <div className="mt-5 flex items-end justify-between border-t border-slate-100 pt-5">
+                                <span className="font-bold text-slate-950">Total</span>
+                                <span className="text-xl font-extrabold text-slate-950">{formatPrice(subtotal)}</span>
+                            </div>
+
+                            <div className="mt-5 flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                                <ShieldCheck size={18} className="shrink-0 text-brand-600" />
+                                <span>Protected by secure Razorpay payment processing</span>
+                            </div>
+                        </aside>
                     </div>
                 )}
             </div>

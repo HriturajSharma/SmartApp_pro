@@ -1,7 +1,6 @@
-
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useAuth } from "./AuthContext";
 import { getCart } from "../services/cart.service";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext(null);
 
@@ -32,6 +31,10 @@ export const CartProvider = ({ children }) => {
     if (!authLoading) refreshCart();
   }, [refreshCart, authLoading]);
 
+  const applyCartResponse = useCallback((response) => {
+    setCartItems(response?.cart?.items || []);
+  }, []);
+
   const cartCount = cartItems.reduce(
     (total, item) => total + (item.quantity || 0),
     0
@@ -39,7 +42,7 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, cartCount, refreshCart }}
+      value={{ cartItems, cartCount, refreshCart, applyCartResponse }}
     >
       {children}
     </CartContext.Provider>
