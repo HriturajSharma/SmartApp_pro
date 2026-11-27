@@ -2,6 +2,13 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
+const TOKEN_LIFETIME = "30d";
+const TOKEN_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
+
+const isProduction = () =>
+    process.env.NODE_ENV === "production" ||
+    Boolean(process.env.RAILWAY_ENVIRONMENT);
+
 // Generate JWT token
 const generateToken = (user) => {
     if (!process.env.JWT_SECRET) {
@@ -15,18 +22,20 @@ const generateToken = (user) => {
         },
         process.env.JWT_SECRET,
         {
-            expiresIn: "1d"
+            expiresIn: TOKEN_LIFETIME
         }
     );
 };
 
 // Set authentication cookie
 const setTokenCookie = (res, token) => {
+    const production = isProduction();
+
     res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000,
+        secure: production,
+        sameSite: production ? "none" : "lax",
+        maxAge: TOKEN_MAX_AGE,
         path: "/"
     });
 };
@@ -234,10 +243,12 @@ export const getMe = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
+        const production = isProduction();
+
         res.clearCookie("token", {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: production,
+            sameSite: production ? "none" : "lax",
             path: "/"
         });
 

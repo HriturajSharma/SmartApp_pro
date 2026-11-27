@@ -17,8 +17,22 @@ import dns from "node:dns"
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express()
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://smartapppro-forntend.vercel.app",
+  ...(process.env.CLIENT_URL || "").split(",")
+]
+  .map((origin) => origin.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
 app.use(cors({
-  origin: (process.env.CLIENT_URL || "http://localhost:5173").split(","),
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error("Not allowed by CORS"));
+  },
   credentials: true
 }))
 
