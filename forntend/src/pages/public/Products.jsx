@@ -5,6 +5,7 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../hooks/useAuth";
 import { addToCart as addProductToCart } from "../../services/cart.service";
 import { getCategories } from "../../services/category.service";
 import { getProducts } from "../../services/product.service";
@@ -12,6 +13,7 @@ import { getProducts } from "../../services/product.service";
 const Products = () => {
   // URL category parameter
   const { refreshCart } = useCart();
+  const { checkAuth } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const categoryFromUrl = searchParams.get("category") || "All";
@@ -129,13 +131,13 @@ const [cartMessage, setCartMessage] = useState("");
   try {
     setAddingProductId(product._id);
     setCartMessage("");
-    await refreshCart();
-
     await addProductToCart(product._id, 1);
 
     setCartMessage(`${product.name} added to cart successfully!`);
+    await refreshCart();
   } catch (error) {
     if (error.response?.status === 401) {
+      await checkAuth();
       navigate("/login");
       return;
     }

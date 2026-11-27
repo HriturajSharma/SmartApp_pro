@@ -18,7 +18,7 @@ npm install
 Create `.env`:
 
 ```env
-VITE_API_URL=http://localhost:8000/api
+VITE_API_URL=https://server-production-4af20ab4.up.railway.app/api
 ```
 
 Start:
@@ -28,6 +28,8 @@ npm run dev
 ```
 
 Frontend URL: `http://localhost:5173`
+
+Live project: [SmartLife Store](https://smartapppro-forntend.vercel.app/)
 
 ## Commands
 
