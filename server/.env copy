@@ -1,0 +1,10 @@
+PORT = 8000
+MONGO_URI =mongodb+srv://sharmahrituraj2003_db_user:rlDAnH6ekTmOynUo@cluster0.3azlokh.mongodb.net/SMARTLIFE
+
+JWT_SECRET=dfghjkjhdsjdiehdnkdskdhsdiuewhdekdhkewdhibncsnd,sd
+NODE_ENV=development
+
+
+
+RAZORPAY_KEY_ID=rzp_test_U4uzT7CuIgHGZa
+RAZORPAY_KEY_SECRET=dK3JVir0EehvL1wWpYUXjSmg
