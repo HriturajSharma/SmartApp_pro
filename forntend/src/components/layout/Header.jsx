@@ -14,7 +14,7 @@ const links = [
 ];
 
 const iconBtn =
-    "flex items-center gap-2 rounded-full p-2.5 text-slate-700 hover:bg-brand-50 hover:text-brand-600";
+    "flex items-center gap-2 rounded-full p-2 text-slate-700 hover:bg-brand-50 hover:text-brand-600 sm:p-2.5";
 
 const Header = () => {
     const { cartCount } = useCart();
@@ -56,15 +56,15 @@ const Header = () => {
     return (
         <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/90 shadow-[0_8px_24px_-20px_rgba(15,23,42,0.5)] backdrop-blur-xl">
             <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3">
-                <button type="button" className={`${iconBtn} md:hidden`} onClick={() => setOpen((v) => !v)} aria-label="Menu">
+                <button type="button" className={`${iconBtn} lg:hidden`} onClick={() => setOpen((v) => !v)} aria-label="Menu" aria-expanded={open}>
                     {open ? <X size={22} /> : <Menu size={22} />}
                 </button>
 
-                <Link to="/" className="flex shrink-0 items-center gap-2.5 text-2xl font-extrabold tracking-tight text-ink">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white shadow-md shadow-brand-500/25">
+                <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-extrabold tracking-tight text-ink sm:gap-2.5 sm:text-2xl">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-500 text-white shadow-md shadow-brand-500/25 sm:h-9 sm:w-9">
                         <Sparkles size={18} />
                     </span>
-                    <span className="hidden sm:inline">Smart<span className="text-brand-500">Home</span></span>
+                    <span>Smart<span className="text-brand-500">Home</span></span>
                 </Link>
 
                 <nav className="ml-3 hidden items-center gap-1 lg:flex">
@@ -84,9 +84,9 @@ const Header = () => {
                     ))}
                 </nav>
 
-                {searchForm("ml-auto hidden max-w-md flex-1 md:block")}
+                {searchForm("ml-auto hidden max-w-md flex-1 lg:block")}
 
-                <div className="flex items-center gap-1">
+                <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1 lg:ml-0">
                     {isAuthenticated ? (
                         <>
                             <Link to={isAdmin ? "/admin" : "/my-orders"} className={iconBtn} title={user?.name}>
@@ -95,7 +95,7 @@ const Header = () => {
                                     {isAdmin ? "Dashboard" : user?.name?.split(" ")[0]}
                                 </span>
                             </Link>
-                            <button type="button" onClick={handleLogout} className={`${iconBtn} hover:!text-red-500`} aria-label="Logout">
+                            <button type="button" onClick={handleLogout} className={`${iconBtn} hover:text-red-500!`} aria-label="Logout">
                                 <LogOut size={20} />
                             </button>
                         </>
@@ -117,7 +117,7 @@ const Header = () => {
             </div>
 
             {open && (
-                <div className="border-t border-slate-100 bg-white/95 px-4 pb-4 pt-3 shadow-lg md:hidden">
+                <div className="border-t border-slate-100 bg-white/95 px-4 pb-4 pt-3 shadow-lg lg:hidden">
                     {searchForm("mb-3")}
                     <ul className="space-y-1">
                         {links.map((l) => (
