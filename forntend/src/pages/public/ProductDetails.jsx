@@ -1,19 +1,23 @@
 
 import {
-  ArrowLeft,
-  Award,
-  ShieldCheck,
-  Truck
+    ArrowLeft,
+    Award,
+    ShieldCheck,
+    Truck
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { addToCart } from "../../services/cart.service";
+import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../hooks/useAuth";
 import { getProductById } from "../../services/product.service";
 
 
 const ProductDetails = () => {
 
+    const { addItem } = useCart();
+    const { user, authLoading, checkAuth } = useAuth();
+    const location = useLocation();
     const navigate = useNavigate();
 
 const [adding, setAdding] = useState(false);
@@ -80,21 +84,37 @@ const [message, setMessage] = useState("");
   );
 
   const handleAddToCart = async () => {
+    if (authLoading) return;
+    if (!user) {
+      navigate("/login", {
+        state: {
+          from: { pathname: location.pathname, search: location.search },
+          loginRequired: true,
+        },
+      });
+      return;
+    }
+
     try {
         setAdding(true);
         setMessage("");
 
-        await addToCart(product._id, 1);
+        await addItem(product, 1);
 
         setMessage("Product added to cart successfully!");
     } catch (error) {
-        if (error.response?.status === 401) {
-            navigate("/login");
-            return;
-        }
-
+      if (error.response?.status === 401) {
+        await checkAuth();
+        navigate("/login", {
+          state: {
+            from: { pathname: location.pathname, search: location.search },
+            loginRequired: true,
+          },
+        });
+        return;
+      }
         setMessage(
-            error.response?.data?.message || "Unable to add product to cart."
+          error.response?.data?.message || error.message || "Unable to add product to cart."
         );
     } finally {
         setAdding(false);
@@ -235,10 +255,10 @@ const [message, setMessage] = useState("");
             {/* Add to Cart */}
            <button
     onClick={handleAddToCart}
-    disabled={adding || product.stock <= 0}
+    disabled={authLoading || adding || product.stock <= 0}
     className="rounded-lg bg-black px-6 py-3 text-white disabled:cursor-not-allowed disabled:opacity-50"
 >
-    {adding ? "Adding..." : "Add to Cart"}
+    {authLoading ? "Checking..." : adding ? "Adding..." : "Add to Cart"}
 </button>
 
 {message && (

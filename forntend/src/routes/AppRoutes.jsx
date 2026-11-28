@@ -10,7 +10,6 @@ import ManageCategories from "../pages/admin/ManageCategories";
 import ManageOrders from "../pages/admin/ManageOrders";
 import ManageProducts from "../pages/admin/ManageProducts";
 import NotFound from "../pages/NotFound";
-import Profile from "../pages/user/Profile";
 import Cart from "../pages/public/Cart";
 import Checkout from "../pages/public/Checkout";
 import Home from "../pages/public/Home";
@@ -21,6 +20,7 @@ import Register from "../pages/public/Register";
 import TrackOrder from "../pages/public/TrackOrder";
 import MyOrders from "../pages/user/MyOrders";
 import OrderDetails from "../pages/user/OrderDetails";
+import Profile from "../pages/user/Profile";
 
 const router = createBrowserRouter([
   {

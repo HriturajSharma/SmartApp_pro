@@ -1,22 +1,18 @@
 import { Minus, Plus, Search, ShoppingCart, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../hooks/useAuth";
-import {
-    addToCart as addProductToCart,
-    removeCartItem,
-    updateCartItem,
-} from "../../services/cart.service";
 import { getCategories } from "../../services/category.service";
 import { getProducts } from "../../services/product.service";
 
 const Products = () => {
   // URL category parameter
-  const { cartItems, applyCartResponse, refreshCart } = useCart();
-  const { checkAuth } = useAuth();
+  const { cartItems, addItem, setItemQuantity } = useCart();
+  const { user, authLoading, checkAuth } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const categoryFromUrl = searchParams.get("category") || "All";
@@ -35,20 +31,8 @@ const Products = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
-
   const [addingProductId, setAddingProductId] = useState(null);
   const [cartMessage, setCartMessage] = useState("");
-
-  const searchFromUrl = searchParams.get("search") || "";
-  useEffect(() => {
-    setSearch(searchFromUrl);
-  }, [searchFromUrl]);
-
-  // Keep category state synchronized with URL changes
-  useEffect(() => {
-    setCategory(categoryFromUrl);
-  }, [categoryFromUrl]);
 
   // Fetch products
   useEffect(() => {
@@ -110,6 +94,7 @@ const Products = () => {
   // Handle category selection
   const handleCategoryChange = (value) => {
     setCategory(value);
+    setSearch("");
 
     if (value === "All") {
       setSearchParams({});
@@ -131,23 +116,35 @@ const Products = () => {
   };
 
   const handleAddToCart = async (product) => {
+    if (authLoading) return;
+    if (!user) {
+      navigate("/login", {
+        state: {
+          from: { pathname: location.pathname, search: location.search },
+          loginRequired: true,
+        },
+      });
+      return;
+    }
+
     try {
       setAddingProductId(product._id);
       setCartMessage("");
-      const response = await addProductToCart(product._id, 1);
-
-      applyCartResponse(response);
+      await addItem(product, 1);
       setCartMessage(`${product.name} added to cart successfully!`);
-      await refreshCart();
     } catch (error) {
       if (error.response?.status === 401) {
         await checkAuth();
-        navigate("/login");
+        navigate("/login", {
+          state: {
+            from: { pathname: location.pathname, search: location.search },
+            loginRequired: true,
+          },
+        });
         return;
       }
-
       setCartMessage(
-        error.response?.data?.message || "Unable to add product to cart."
+        error.response?.data?.message || error.message || "Unable to add product to cart."
       );
     } finally {
       setAddingProductId(null);
@@ -159,12 +156,7 @@ const Products = () => {
       setAddingProductId(productId);
       setCartMessage("");
 
-      const response =
-        quantity < 1
-          ? await removeCartItem(productId)
-          : await updateCartItem(productId, quantity);
-
-      applyCartResponse(response);
+      await setItemQuantity(productId, quantity);
     } catch (error) {
       setCartMessage(
         error.response?.data?.message || "Unable to update cart quantity."
@@ -498,11 +490,13 @@ const Products = () => {
                                   <button
                                     type="button"
                                     onClick={() => handleAddToCart(product)}
-                                    disabled={addingProductId === product._id || product.stock <= 0}
-                                    className="flex items-center gap-2 rounded-xl bg-brand-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-500/20 transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                    disabled={authLoading || addingProductId === product._id || product.stock <= 0}
+                                    className="flex min-h-11 touch-manipulation items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-500/20 transition hover:bg-brand-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                                   >
                                     <ShoppingCart size={16} />
-                                    {product.stock <= 0
+                                    {authLoading
+                                      ? "Checking..."
+                                      : product.stock <= 0
                                       ? "Out of Stock"
                                       : addingProductId === product._id
                                       ? "Adding..."
@@ -530,7 +524,7 @@ const Products = () => {
               </>
             )}
             {cartMessage && (
-              <p className="mb-4 rounded-xl border border-brand-100 bg-brand-50 p-3 text-sm text-brand-700">
+              <p role="status" aria-live="polite" className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-lg rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm font-medium text-brand-700 shadow-xl">
                 {cartMessage}
               </p>
             )}

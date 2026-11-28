@@ -8,15 +8,11 @@ import {
     Trash2,
     Truck
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useCart } from "../../context/CartContext";
-import {
-    getCart,
-    removeCartItem,
-    updateCartItem
-} from "../../services/cart.service";
+import { useAuth } from "../../hooks/useAuth";
 
 const formatPrice = (price) =>
     new Intl.NumberFormat("en-IN", {
@@ -26,32 +22,11 @@ const formatPrice = (price) =>
     }).format(price || 0);
 
 const Cart = () => {
-    const { applyCartResponse } = useCart();
-    const [cart, setCart] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { cartItems: cart, cartReady, setItemQuantity, removeItem } = useCart();
+    const { user, authLoading } = useAuth();
+    const loading = authLoading || !cartReady;
     const [error, setError] = useState("");
     const [updatingId, setUpdatingId] = useState("");
-
-    const fetchCart = async () => {
-        try {
-            setLoading(true);
-            const response = await getCart();
-            const items = response.cart?.items || [];
-            setCart(items);
-            applyCartResponse(response);
-            setError("");
-        } catch (err) {
-            setError(
-                err.response?.data?.message || "Unable to load your cart."
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchCart();
-    }, []);
 
     const handleQuantity = async (productId, quantity) => {
         if (quantity < 1) return;
@@ -59,9 +34,8 @@ const Cart = () => {
         try {
             setUpdatingId(productId);
 
-            const response = await updateCartItem(productId, quantity);
-            setCart(response.cart?.items || []);
-            applyCartResponse(response);
+            await setItemQuantity(productId, quantity);
+            setError("");
         } catch (err) {
             setError(
                 err.response?.data?.message || "Unable to update quantity."
@@ -75,9 +49,8 @@ const Cart = () => {
         try {
             setUpdatingId(productId);
 
-            const response = await removeCartItem(productId);
-            setCart(response.cart?.items || []);
-            applyCartResponse(response);
+            await removeItem(productId);
+            setError("");
         } catch (err) {
             setError(
                 err.response?.data?.message || "Unable to remove product."
@@ -284,9 +257,15 @@ const Cart = () => {
                                 to="/checkout"
                                 className="mt-6 flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-bold text-white shadow-lg shadow-slate-950/10 transition hover:-translate-y-0.5 hover:bg-brand-600"
                             >
-                                Proceed to checkout
+                                {user ? "Proceed to checkout" : "Sign in to checkout"}
                                 <ArrowRight size={18} />
                             </Link>
+
+                            {!user && (
+                                <p className="mt-3 text-center text-xs text-slate-500">
+                                    Your cart is saved on this device. Sign in to continue checkout.
+                                </p>
+                            )}
 
                             <div className="mt-5 space-y-3 border-t border-slate-100 pt-5">
                                 <div className="flex items-center gap-3 text-xs text-slate-500">

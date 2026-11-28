@@ -42,25 +42,29 @@ const Login = () => {
         try {
             setLoading(true);
 
-const response = await login({
-    email,
-    password: formData.password
-});
+            const response = await login({
+                email,
+                password: formData.password
+            });
 
-const loggedInUser = response.user;
+            const loggedInUser = response.user;
+            const from = location.state?.from;
+            const redirectPath = from?.pathname?.startsWith("/") && !from.pathname.startsWith("//")
+                ? `${from.pathname}${from.search || ""}${from.hash || ""}`
+                : null;
 
-const redirectPath = location.state?.from?.pathname;
-
-navigate(
-    redirectPath ||
-    (loggedInUser?.role === "admin" ? "/admin" : "/"),
-    { replace: true }
-);
-        } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                "Login failed. Please check your credentials."
+            navigate(
+                redirectPath || (loggedInUser?.role === "admin" ? "/admin" : "/"),
+                { replace: true }
             );
+        } catch (err) {
+            if (!err.response) {
+                setError("Unable to reach the login service. Check your phone's connection and try again.");
+            } else if (err.response.status === 401) {
+                setError("Invalid email or password. Check the password capitalization and make sure this account is registered on this store.");
+            } else {
+                setError(err.response.data?.message || "The login service returned an error. Please try again.");
+            }
         } finally {
             setLoading(false);
         }
@@ -80,6 +84,12 @@ navigate(
                         Login to your Smart Appliances account
                     </p>
                 </div>
+
+                {location.state?.loginRequired && (
+                    <p className="mb-5 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+                        Please sign in before adding products to your cart. You’ll return to shopping after login.
+                    </p>
+                )}
 
                 {/* Error */}
                 {error && (
@@ -117,6 +127,10 @@ navigate(
                                 onChange={handleChange}
                                 placeholder="Enter your email"
                                 autoComplete="email"
+                                autoCapitalize="none"
+                                autoCorrect="off"
+                                spellCheck={false}
+                                inputMode="email"
                                 required
                                 className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
@@ -146,6 +160,9 @@ navigate(
                                 onChange={handleChange}
                                 placeholder="Enter your password"
                                 autoComplete="current-password"
+                                autoCapitalize="none"
+                                autoCorrect="off"
+                                spellCheck={false}
                                 required
                                 className="w-full border border-gray-300 rounded-lg pl-10 pr-12 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />

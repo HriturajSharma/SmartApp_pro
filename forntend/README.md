@@ -15,11 +15,13 @@ cd forntend
 npm install
 ```
 
-Create `.env`:
+The Vite development server proxies API requests to the local backend at `http://localhost:8000` by default. Start the server in a separate terminal first. The dev script listens on the LAN, so a phone on the same Wi-Fi can use the computer's LAN IP and port `5173`. To use another backend, create `.env.local`:
 
 ```env
-VITE_API_URL=https://server-production-4af20ab4.up.railway.app/api
+VITE_API_PROXY_TARGET=https://server-production-4af20ab4.up.railway.app
 ```
+
+Use the port configured by `PORT` in `server/.env` if it differs from `8000`, then restart Vite. Production deployments continue to use the API rewrite in `vercel.json`. Accounts and seeded demo users exist only in the database where they were registered/seeded, so local and production credentials are not interchangeable. Do not proxy a production Secure cookie through a plain-HTTP phone dev URL; the browser can reject it, causing cart requests to lose authentication.
 
 Start:
 
@@ -46,6 +48,8 @@ npm run preview  # Preview production build
 |---|---|---|
 | Admin | `admin@example.com` | `Admin@123` |
 | User | `john@example.com` | `User@123` |
+
+Demo accounts work only after running the seed script against the same MongoDB database used by the API.
 
 ## Authentication
 
@@ -91,7 +95,7 @@ npm run seed
 npm run dev
 ```
 
-Backend URL: `http://localhost:8000`
+Backend URL: `http://localhost:8000` (or the configured `PORT`)
 
 Configure `server/.env` with:
 
