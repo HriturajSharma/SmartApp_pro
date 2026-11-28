@@ -31,7 +31,7 @@ npm run dev
 
 Frontend URL: `http://localhost:5173`
 
-Live project: [SmartLife Store](https://smartapppro-forntend.vercel.app/)
+Live project: [SmartLife Store](https://smart-app-pro.vercel.app/)
 
 ## Commands
 
@@ -44,12 +44,39 @@ npm run preview  # Preview production build
 
 ## Demo Accounts
 
-| Role | Email | Password |
-|---|---|---|
-| Admin | `admin@example.com` | `Admin@123` |
-| User | `john@example.com` | `User@123` |
+These accounts are created by `npm run seed` and work only against the MongoDB database that was seeded. Local and production databases may have different users.
 
-Demo accounts work only after running the seed script against the same MongoDB database used by the API.
+| Name | Email | Password | Role |
+|---|---|---|---|
+| Admin | `admin@example.com` | `Admin@123` | Admin |
+| User1 | `john@example.com` | `User@123` | User |
+| User2 | `jane@example.com` | `User@456` | User |
+
+## Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| Frontend | React 19, Vite, React Router, Tailwind CSS 4, Axios, lucide-react |
+| Backend | Node.js, Express 5, REST API |
+| Database | MongoDB with Mongoose |
+| Authentication | JWT in HTTP-only cookies, bcrypt password hashing |
+| Payments | Razorpay Checkout and server-side payment verification |
+| Deployment | Vercel frontend, Railway API |
+
+## Project Implementation
+
+- **Storefront:** responsive home page with hero, categories, featured products, promotional banners and support information.
+- **Product discovery:** product listing and detail pages with category, search, wattage/capacity and auto-shutoff filters, sorting, stock information and product specifications.
+- **Account and access control:** registration/login, HTTP-only JWT session, user profile and order history; admin-only dashboard and management pages are protected by role.
+- **Cart and orders:** authenticated cart with quantity updates and server-side stock/price validation when an order is created.
+- **Administration:** dashboard, product management, category/banner management, and order management/detail views.
+- **API architecture:** frontend service modules call Express REST endpoints for users/auth, products, categories, banners, carts, orders and admin operations.
+
+## Payment Method
+
+Checkout currently uses **Razorpay**. The customer enters shipping details, the backend creates an order from the signed-in user's cart, and the backend creates a Razorpay payment order. Razorpay Checkout collects payment details. The server verifies the Razorpay signature and captured payment before marking the order paid, deducting stock, and clearing the cart. Razorpay credentials must be configured on the backend; never put the key secret in frontend code.
+
+Although the order schema recognizes other payment method values, the current checkout UI only offers Razorpay; Stripe and cash-on-delivery flows are not implemented.
 
 ## Authentication
 
@@ -60,19 +87,22 @@ Demo accounts work only after running the seed script against the same MongoDB d
 
 ## Main Pages
 
-- `/` — Home
-- `/products` — Product listing
-- `/products/:id` — Product details
-- `/cart` — Shopping cart
-- `/checkout` — Checkout
-- `/track-order` — Track an order
-- `/login` — Login
-- `/register` — Registration
-- `/admin` — Admin dashboard
-- `/admin/products` — Manage products
-- `/admin/orders` — Manage orders
-- `/categories` — Manage categories
-- `/banners` — Manage banners
+| Route | Page |
+|---|---|
+| `/` | Home/storefront |
+| `/products` | Product listing and filters |
+| `/products/:id` | Product details |
+| `/login`, `/register` | Authentication |
+| `/cart`, `/checkout` | Protected cart and Razorpay checkout |
+| `/track-order` | Public order tracking |
+| `/profile` | Protected customer profile |
+| `/my-orders` | Protected order history |
+| `/my-orders/:id` | Protected order details |
+| `/admin` | Admin dashboard |
+| `/admin/products`, `/admin/products/add`, `/admin/products/edit/:id` | Admin product management |
+| `/admin/categories` | Admin category management |
+| `/admin/banners` | Admin banner management |
+| `/admin/orders`, `/admin/orders/:id` | Admin order management/details |
 
 ## API Services
 

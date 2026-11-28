@@ -74,7 +74,7 @@ const products = [
         price: 4999,
         mrp: 6499,
         images: [{
-            url: "https://placehold.co/600x600?text=Digital+Air+Fryer",
+            url: "https://i.pinimg.com/1200x/05/fa/30/05fa30bc52668558013df79d8e4acd65.jpg",
             public_id: ""
         }],
         specifications: {
@@ -112,7 +112,7 @@ const products = [
         price: 1299,
         mrp: 1799,
         images: [{
-            url: "https://placehold.co/600x600?text=Electric+Kettle",
+            url: "https://i.pinimg.com/1200x/09/e8/e1/09e8e154d86c75fc8314e62db07db18e.jpg",
             public_id: ""
         }],
         specifications: {
@@ -150,7 +150,7 @@ const products = [
         price: 1599,
         mrp: 2199,
         images: [{
-            url: "https://placehold.co/600x600?text=Pop+Up+Toaster",
+            url: "https://i.pinimg.com/736x/0a/7a/62/0a7a62c2eac2ac20de118aa7b39a9a35.jpg",
             public_id: ""
         }],
         specifications: {
@@ -188,7 +188,7 @@ const products = [
         price: 2999,
         mrp: 3999,
         images: [{
-            url: "https://placehold.co/600x600?text=Infrared+Cooker",
+            url: "https://i.pinimg.com/736x/a7/9b/3b/a79b3bcd71d732ff0e7138011cb1b703.jpg",
             public_id: ""
         }],
         specifications: {
@@ -226,7 +226,7 @@ const products = [
         price: 1899,
         mrp: 2499,
         images: [{
-            url: "https://placehold.co/600x600?text=Electric+Rice+Cooker",
+            url: "https://i.pinimg.com/1200x/c9/3a/83/c93a83332bf32e5ea7fa7650f6f7b316.jpg",
             public_id: ""
         }],
         specifications: {
