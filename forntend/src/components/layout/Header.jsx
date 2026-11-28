@@ -55,7 +55,7 @@ const Header = () => {
 
     return (
         <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/90 shadow-[0_8px_24px_-20px_rgba(15,23,42,0.5)] backdrop-blur-xl">
-            <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
+            <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3">
                 <button type="button" className={`${iconBtn} md:hidden`} onClick={() => setOpen((v) => !v)} aria-label="Menu">
                     {open ? <X size={22} /> : <Menu size={22} />}
                 </button>
@@ -64,7 +64,7 @@ const Header = () => {
                     <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white shadow-md shadow-brand-500/25">
                         <Sparkles size={18} />
                     </span>
-                    <span>Smart<span className="text-brand-500">Home</span></span>
+                    <span className="hidden sm:inline">Smart<span className="text-brand-500">Home</span></span>
                 </Link>
 
                 <nav className="ml-3 hidden items-center gap-1 lg:flex">
@@ -100,7 +100,7 @@ const Header = () => {
                             </button>
                         </>
                     ) : (
-                        <Link to="/login" className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-600">
+                        <Link to="/login" className="rounded-full bg-ink px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 sm:px-5 sm:py-2.5">
                             Login
                         </Link>
                     )}

@@ -176,7 +176,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-[#faf9f6]">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className="mx-auto max-w-7xl px-3 py-7 sm:px-6 sm:py-14 lg:px-8">
         {/* Page Heading */}
         <div className="mb-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-600">
@@ -426,7 +426,7 @@ const Products = () => {
                             />
                           </Link>
 
-                          <div className="p-4">
+                          <div className="p-3.5 sm:p-4">
                             {/* Category */}
                             <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">
                               {product.category?.name || "Uncategorized"}
@@ -463,7 +463,7 @@ const Products = () => {
                             </div>
 
                             {/* Price and Cart */}
-                            <div className="mt-4 flex items-center justify-between">
+                            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                               <span className="text-xl font-bold tracking-tight text-slate-900">
                                 ₹{Number(product.price || 0).toLocaleString("en-IN")}
                               </span>

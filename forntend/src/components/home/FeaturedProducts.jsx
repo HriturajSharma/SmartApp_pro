@@ -172,7 +172,7 @@ const FeaturedProducts = () => {
                                     </span>
                                 </div>
 
-                                <div className="mt-4 flex items-center justify-between gap-3">
+                                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                                     <div>
                                         <p className="text-lg font-bold text-slate-900">
                                             ₹{Number(product.price).toLocaleString("en-IN")}

@@ -100,7 +100,7 @@ const Cart = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#f7f7f5] px-4 py-8 sm:px-6 sm:py-12">
+        <div className="min-h-screen bg-[#f7f7f5] px-3 py-6 sm:px-6 sm:py-12">
             <div className="mx-auto max-w-6xl">
                 <Link
                     to="/products"
@@ -115,7 +115,7 @@ const Cart = () => {
                         <p className="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
                             Your bag
                         </p>
-                        <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                        <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-4xl">
                             Shopping Cart
                         </h1>
                     </div>
