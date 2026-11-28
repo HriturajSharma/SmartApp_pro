@@ -11,9 +11,9 @@ import orderRoutes from "./routers/order.routes.js"
 import productRoutes from "./routers/product.routes.js"
 import userRoutes from "./routers/user.route.js"
 
+import dns from "node:dns"
 import adminRoutes from "./routers/admin.routes.js"
 dotenv.config()
-import dns from "node:dns"
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express()
@@ -25,13 +25,35 @@ const allowedOrigins = [
   .map((origin) => origin.trim().replace(/\/$/, ""))
   .filter(Boolean);
 
+const isAllowedOrigin = (origin) => {
+  if (allowedOrigins.includes(origin)) return true;
+
+  try {
+    const url = new URL(origin);
+    const isVercelPreview =
+      url.protocol === "https:" &&
+      /^smartapppro-forntend(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(url.hostname);
+    const isLocalDevelopment =
+      process.env.NODE_ENV !== "production" &&
+      url.protocol === "http:" &&
+      (/^(localhost|127\.0\.0\.1)$/.test(url.hostname) ||
+        /^192\.168\.\d{1,3}\.\d{1,3}$/.test(url.hostname) ||
+        /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(url.hostname));
+
+    return isVercelPreview || isLocalDevelopment;
+  } catch {
+    return false;
+  }
+};
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || isAllowedOrigin(origin)) {
       callback(null, true);
       return;
     }
-    callback(new Error("Not allowed by CORS"));
+    console.warn(`CORS rejected origin: ${origin}`);
+    callback(null, false);
   },
   credentials: true
 }))

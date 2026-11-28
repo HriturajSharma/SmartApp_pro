@@ -104,8 +104,11 @@ PORT=8000
 MONGO_URI=<mongodb_connection_string>
 JWT_SECRET=<secure_secret>
 NODE_ENV=development
+CLIENT_URL=https://your-custom-store-domain.com
 RAZORPAY_KEY_ID=<key_id>
 RAZORPAY_KEY_SECRET=<key_secret>
 ```
+
+The API CORS policy allows this project's Vercel deployments and exact origins listed in `CLIENT_URL` (comma-separated for multiple custom domains). After changing the backend CORS policy or `CLIENT_URL` on Railway, redeploy/restart the backend for mobile login requests to use the update.
 
 Never commit real database passwords, JWT secrets, or Razorpay credentials.
